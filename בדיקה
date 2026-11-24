@@ -1,169 +1,303 @@
-import tkinter as tk  # מייבא את ספריית tkinter ליצירת ממשק משתמש גרפי (GUI)
+import customtkinter as ctk
 
-class MainDashboardGUI:  # מגדיר את המחלקה הראשית לניהול מסך לוח הבקרה (Dashboard) של המערכת
-    def __init__(self, root, username="מנהל", role="Admin"):  # בנאי המחלקה המקבל את חלון ה-Tkinter, שם משתמש ותפקיד
-        self.root = root  # שומר את אובייקט החלון הראשי כמשתנה של המופע
-        self.root.title("ENC SECURE CAM - Home")  # מגדיר את כותרת החלון המוצגת בסרגל העליון
-        self.root.geometry("700x950")  # קובע את מידות החלון: רוחב 700 פיקסלים וגובה 950 פיקסלים
-        self.root.resizable(False, False)  # נועל את החלון ומונע שינוי גודל על ידי המשתמש
-        
-        # פלטת צבעים תואמת למסך ה-Login ולהדמיה
-        self.bg_blue = "#1f4e78"       # צבע רקע כחול כהה/מודרני עבור החלון הראשי וגוף המסך
-        self.header_bg = "#ffffff"     # צבע רקע לבן עבור הסרגל העליון וסרגל הניווט התחתון
-        self.card_bg = "#ffffff"       # צבע רקע לבן עבור כרטיסי הפעולות
-        self.card_hover = "#f0f6fc"    # גוון כחלחל-בהיר עדין בעת מעבר סמן העכבר (ריחוף) מעל כרטיס
-        self.accent_blue = "#0a61c7"   # צבע כחול דגש של המערכת לאלמנטים פעילים וכפתורים
-        self.text_dark = "#1a202c"     # צבע טקסט כהה עבור כותרות וטקסטים ראשיים
-        self.text_gray = "#64748b"     # צבע טקסט אפור עבור כותרות משנה וטקסטים משניים
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
-        self.username = username  # שומר את שם המשתמש המחובר כמשתנה מופע
-        self.role = role  # שומר את הרשאת/תפקיד המשתמש כמשתנה מופע
 
-        self.root.configure(bg=self.bg_blue)  # מגדיר את צבע הרקע של החלון הראשי לצבע הכחול הכהה
-        self.setup_ui()  # קורא לפונקציה המגדירה ובונה את כל רכיבי ממשק המשתמש (UI)
+class CyberVaultDashboardGUI:
+    def __init__(self, root, username="מנהל", role="מנהל מערכת"):
+        self.root = root
+        self.root.title("ENC SECURE CAM — Command & Encrypted Vault")
+        self.root.geometry("1040x700")
+        self.root.resizable(False, False)
 
-    def setup_ui(self):  # פונקציה לבנייה וסידור כל רכיבי הממשק הגרפי במסך
-        # --- 1. סרגל עליון (Header) ---
-        header = tk.Frame(self.root, bg=self.header_bg, height=110)  # יוצר מסגרת (Frame) עבור הסרגל העליון בגובה 110 פיקסלים
-        header.pack(fill="x", side="top")  # מציב את הסרגל העליון בחלקו העליון של המסך ומותח אותו לכל הרוחב
-        header.pack_propagate(False)  # מונע מהסרגל העליון להתכווץ או לשנות את גובהו הקבוע בהתאם לרכיבים שבתוכו
+        self.username = username
+        self.role = role
 
-        # צד שמאל: כותרת המסך
-        title_lbl = tk.Label(  # יוצר תווית טקסט עבור כותרת המסך
-            header, text="Home בית", font=("Segoe UI", 22, "bold"),  # מגדיר את הטקסט "Home בית" בגופן Segoe UI מודגש
-            bg=self.header_bg, fg=self.text_dark  # מגדיר רקע לבן וטקסט כהה
+        # פלטת צבעים כהה ומקצועית למערכת אבטחה מוצפנת
+        self.bg_obsidian = "#090d16"      # רקע ראשי עמוק
+        self.panel_dark = "#101726"       # סרגלים ופאנלים
+        self.card_bg = "#131c2e"          # כרטיסים מרכזיים
+        self.card_hover = "#18243b"       # מצב ריחוף בכרטיס
+        self.border_subtle = "#22314d"    # גבול עדין
+        self.border_glow = "#38bdf8"      # הדגשה כחול-תכלת בריחוף
+        self.cyan_accent = "#38bdf8"
+        self.blue_accent = "#2563eb"
+        self.emerald = "#10b981"
+        self.text_primary = "#f8fafc"
+        self.text_secondary = "#94a3b8"
+
+        self.root.configure(fg_color=self.bg_obsidian)
+        self.setup_ui()
+
+    def setup_ui(self):
+        # --- 1. סרגל עליון (Top Command Bar) ---
+        top_bar = ctk.CTkFrame(
+            self.root, fg_color=self.panel_dark, height=74,
+            corner_radius=0, border_width=1, border_color=self.border_subtle
         )
-        title_lbl.pack(side="left", padx=25)  # מצמיד את הכותרת לצד שמאל עם מרווח אופקי של 25 פיקסלים
+        top_bar.pack(fill="x", side="top")
+        top_bar.pack_propagate(False)
 
-        # מרכז: לוגו המערכת (סמל מגן ומצלמה)
-        logo_canvas = tk.Canvas(header, width=65, height=75, bg=self.header_bg, highlightthickness=0)  # יוצר משטח ציור קטן עבור הלוגו במרכז הסרגל
-        logo_canvas.pack(side="left", expand=True)  # ממקם את משטח הציור במרכז הסרגל העליון באמצעות מתיחה (expand)
-        self.draw_shield_logo(logo_canvas)  # קורא לפונקציה המציירת את סמל המגן והמצלמה על גבי ה-Canvas
+        # מיתוג וחיווי הצפנה משמאל
+        left_group = ctk.CTkFrame(top_bar, fg_color="transparent")
+        left_group.pack(side="left", padx=24)
 
-        # צד ימין: פרטי משתמש וכפתור התנתקות
-        user_frame = tk.Frame(header, bg=self.header_bg)  # יוצר מסגרת פנימית בצד ימין עבור פרטי המשתמש וכפתור היציאה
-        user_frame.pack(side="right", padx=25)  # מצמיד את המסגרת לצד ימין של הסרגל עם מרווח אופקי של 25 פיקסלים
-
-        user_lbl = tk.Label(  # יוצר תווית המציגה את שם המשתמש המחובר עם אייקון
-            user_frame, text=f"👤 מחובר: {self.username}",  # מציג את שם המשתמש הדינמי שהועבר לבנאי
-            font=("Segoe UI", 12, "bold"), bg=self.header_bg, fg=self.text_dark  # מגדיר גופן מודגש, רקע לבן וטקסט כהה
+        brand_mark = ctk.CTkLabel(
+            left_group, text="◈", font=("Segoe UI", 22, "bold"),
+            text_color=self.cyan_accent, fg_color="#0c253b",
+            width=42, height=42, corner_radius=10
         )
-        user_lbl.pack(anchor="e", pady=(0, 6))  # מיישר את תווית המשתמש לימין (מזרח) עם מרווח תחתון של 6 פיקסלים
+        brand_mark.pack(side="left", padx=(0, 12))
 
-        logout_btn = tk.Button(  # יוצר כפתור מעוצב להתנתקות מהמערכת
-            user_frame, text="Logout ↪", font=("Segoe UI", 10, "bold"),  # מגדיר את טקסט הכפתור "Logout ↪" בגופן מודגש
-            bg="#eef4fb", fg=self.accent_blue, relief="flat", cursor="hand2",  # קובע רקע תכלת עדין, טקסט כחול, עיצוב שטוח וסמן יד
-            padx=12, pady=3, command=lambda: self.on_click("Logout")  # מוסיף ריפוד פנימי ומחבר לחיצה להפעלת פונקציית הלחיצה
+        brand_titles = ctk.CTkFrame(left_group, fg_color="transparent")
+        brand_titles.pack(side="left")
+
+        ctk.CTkLabel(
+            brand_titles, text="ENC SECURE CAM",
+            font=("Segoe UI", 18, "bold"), text_color=self.text_primary
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            brand_titles, text="ENCRYPTED SURVEILLANCE & ACCESS CONTROL",
+            font=("Segoe UI", 10, "bold"), text_color=self.cyan_accent
+        ).pack(anchor="w")
+
+        # תגית מערכת מאובטחת
+        status_pill = ctk.CTkFrame(
+            top_bar, fg_color="#072923", corner_radius=20,
+            border_width=1, border_color="#065f46"
         )
-        logout_btn.pack(anchor="e")  # מיישר את כפתור ההתנתקות לצד ימין מתחת לתווית המשתמש
+        status_pill.pack(side="left", padx=12)
 
-        # --- 2. גוף המסך המרכזי (רשת 2x2 של כרטיסי הפרויקט) ---
-        main_container = tk.Frame(self.root, bg=self.bg_blue)  # יוצר מסגרת מרכזית עבור גוף המסך שתכיל את כרטיסי המערכת
-        main_container.pack(fill="both", expand=True, padx=35, pady=40)  # מותח את המסגרת לכל השטח הפנוי עם מרווחים חיצוניים
+        ctk.CTkLabel(
+            status_pill, text="●  הצפנה פעילה  |  מצב מאובטח",
+            font=("Segoe UI", 11, "bold"), text_color=self.emerald
+        ).pack(padx=14, pady=5)
 
-        # הגדרת משקל שווה לעמודות ולשורות
-        main_container.columnconfigure(0, weight=1, uniform="col")  # מקצה משקל שווה וחלוקה אחידה לעמודה 0 ברשת
-        main_container.columnconfigure(1, weight=1, uniform="col")  # מקצה משקל שווה וחלוקה אחידה לעמודה 1 ברשת
-        main_container.rowconfigure(0, weight=1, uniform="row")  # מקצה משקל שווה וחלוקה אחידה לשורה 0 ברשת
-        main_container.rowconfigure(1, weight=1, uniform="row")  # מקצה משקל שווה וחלוקה אחידה לשורה 1 ברשת
+        # פרטי משתמש והתנתקות מימין
+        right_group = ctk.CTkFrame(top_bar, fg_color="transparent")
+        right_group.pack(side="right", padx=24)
 
-        # יצירת 4 הכרטיסים לפי המיקום בהדמיה
-        self.create_feature_card(  # יוצר כרטיס ראשון (שמאל למעלה): חיפוש וסינון מתקדם
-            parent=main_container, row=0, col=0,  # מיקום ברשת: שורה 0, עמודה 0
-            icon="📅🔍", title_he="חיפוש וסינון מתקדם",  # אייקון יומן וזכוכית מגדלת, וכותרת בעברית
-            title_en="Advanced Search\n& Filter", action_name="Search & Filter"  # כותרת באנגלית ושם הפעולה
+        logout_btn = ctk.CTkButton(
+            right_group, text="התנתקות  ↪", width=114, height=36,
+            corner_radius=10, fg_color="#2a1219", hover_color="#3f1722",
+            border_width=1, border_color="#7f1d1d",
+            text_color="#fda4af", font=("Segoe UI", 12, "bold"),
+            command=lambda: self.on_click("Logout")
         )
-        self.create_feature_card(  # יוצר כרטיס שני (ימין למעלה): פעולות מצלמה
-            parent=main_container, row=0, col=1,  # מיקום ברשת: שורה 0, עמודה 1
-            icon="📹", title_he="פעולות מצלמה",  # אייקון מצלמת וידאו וכותרת בעברית
-            title_en="Camera Operations", action_name="Camera Operations"  # כותרת באנגלית ושם הפעולה
-        )
-        self.create_feature_card(  # יוצר כרטיס שלישי (שמאל למטה): יומן אבטחה מוגן
-            parent=main_container, row=1, col=0,  # מיקום ברשת: שורה 1, עמודה 0
-            icon="🛡️🔒", title_he="יומן אבטחה מוגן",  # אייקון מגן ומנעול, וכותרת בעברית
-            title_en="Security Logs", action_name="Security Logs"  # כותרת באנגלית ושם הפעולה
-        )
-        self.create_feature_card(  # יוצר כרטיס רביעי (ימין למטה): צילומים מוצפנים
-            parent=main_container, row=1, col=1,  # מיקום ברשת: שורה 1, עמודה 1
-            icon="📁🔒", title_he="צילומים מוצפנים",  # אייקון תיקייה ומנעול, וכותרת בעברית
-            title_en="Encrypted Recordings", action_name="Encrypted Recordings"  # כותרת באנגלית ושם הפעולה
-        )
+        logout_btn.pack(side="right", padx=(14, 0))
 
-        # --- 3. סרגל ניווט תחתון (Bottom Navigation Bar) ---
-        bottom_bar = tk.Frame(self.root, bg=self.header_bg, height=85)  # יוצר מסגרת עבור סרגל הניווט התחתון בגובה 85 פיקסלים
-        bottom_bar.pack(fill="x", side="bottom")  # מצמיד את הסרגל לתחתית המסך ומותח אותו לכל הרוחב
-        bottom_bar.pack_propagate(False)  # מונע מהסרגל התחתון להתכווץ או לשנות את גובהו הקבוע
+        profile_chip = ctk.CTkFrame(
+            right_group, fg_color=self.card_bg, corner_radius=10,
+            border_width=1, border_color=self.border_subtle
+        )
+        profile_chip.pack(side="right")
 
-        nav_items = [  # רשימת הטאבים בסרגל הניווט התחתון: (אייקון, שם הטאב, האם הטאב פעיל כרגע)
-            ("👤", "פרופיל", False),  # טאב פרופיל משתמש (לא פעיל)
-            ("🔔", "התראות", False),  # טאב התראות מערכת (לא פעיל)
-            ("⚙️", "הגדרות", False),  # טאב הגדרות מערכת (לא פעיל)
-            ("🏠", "בית", True)  # טאב מסך הבית (פעיל כעת כברירת מחדל)
+        ctk.CTkLabel(
+            profile_chip,
+            text=f"👤  {self.username}   •   {self.role}",
+            font=("Segoe UI", 12, "bold"), text_color=self.text_primary
+        ).pack(padx=14, pady=7)
+
+        # --- 2. סרגל ניווט תחתון מודרני ---
+        bottom_bar = ctk.CTkFrame(
+            self.root, fg_color=self.panel_dark, height=62,
+            corner_radius=0, border_width=1, border_color=self.border_subtle
+        )
+        bottom_bar.pack(fill="x", side="bottom")
+        bottom_bar.pack_propagate(False)
+
+        nav_box = ctk.CTkFrame(bottom_bar, fg_color="transparent")
+        nav_box.pack(expand=True)
+
+        nav_items = [
+            ("👤  פרופיל", False),
+            ("🔔  התראות", False),
+            ("⚙️  הגדרות", False),
+            ("🏠  בית", True)
         ]
 
-        for icon, label_text, is_active in nav_items:  # לולאה העוברת על כל אחד מפריטי הניווט בסרגל
-            color = self.accent_blue if is_active else self.text_gray  # קובע צבע כחול דגש לטאב הפעיל, ואפור לטאב שאינו פעיל
-            tab = tk.Frame(bottom_bar, bg=self.header_bg, cursor="hand2")  # יוצר מסגרת לכל טאב עם רקע לבן וסמן עכבר בצורת יד
-            tab.pack(side="left", fill="both", expand=True)  # מציב את הטאב ומחלק את רוחב הסרגל התחתון באופן שווה בין כל הטאבים
+        for label, is_active in nav_items:
+            btn = ctk.CTkButton(
+                nav_box, text=label, width=145, height=40,
+                corner_radius=10,
+                fg_color="#132b47" if is_active else "transparent",
+                hover_color="#173456" if is_active else "#182235",
+                border_width=1 if is_active else 0,
+                border_color="#1d4ed8" if is_active else self.panel_dark,
+                text_color=self.cyan_accent if is_active else self.text_secondary,
+                font=("Segoe UI", 13, "bold" if is_active else "normal"),
+                command=lambda name=label: self.on_click(f"Tab: {name.strip()}")
+            )
+            btn.pack(side="left", padx=10)
 
-            icon_lbl = tk.Label(tab, text=icon, font=("Segoe UI", 18), bg=self.header_bg, fg=color)  # יוצר תווית להצגת אייקון הטאב
-            icon_lbl.pack(pady=(12, 2))  # ממקם את האייקון עם מרווח עליון ותחתון קל
+        # --- 3. אזור מרכזי: באנר פתיחה + רשת 2x2 ---
+        workspace = ctk.CTkFrame(self.root, fg_color="transparent")
+        workspace.pack(fill="both", expand=True, padx=28, pady=20)
 
-            txt_lbl = tk.Label(tab, text=label_text, font=("Segoe UI", 11, "bold" if is_active else "normal"), bg=self.header_bg, fg=color)  # יוצר תווית טקסט לשם הטאב (מודגש אם פעיל)
-            txt_lbl.pack()  # ממקם את תווית הטקסט מתחת לאייקון
-
-            # חיבור קליק דמה לכל אלמנט בטאב
-            for widget in (tab, icon_lbl, txt_lbl):  # לולאה המחברת את אירוע הלחיצה לכל הרכיבים בתוך הטאב (המסגרת, האייקון והטקסט)
-                widget.bind("<Button-1>", lambda e, name=label_text: self.on_click(f"Tab: {name}"))  # מחבר לחיצת עכבר שמאלית לפונקציית הלחיצה עם שם הטאב
-
-    def draw_shield_logo(self, canvas):  # פונקציה לציור גרפי של לוגו המגן ועדשת המצלמה במרכז הסרגל העליון
-        """מצייר את סמל המגן הכחול עם עדשת מצלמה במרכז"""
-        # צורת מגן חיצונית
-        shield_pts = [32, 5, 58, 15, 55, 45, 32, 68, 9, 45, 6, 15]  # רשימת קואורדינטות (X, Y) המגדירות את נקודות צורת המגן
-        canvas.create_polygon(shield_pts, fill=self.accent_blue, outline="#084298", width=2, smooth=True)  # מצייר מצולע מוחלק של מגן כחול עם קו מתאר כהה
-        # עיגול עדשת מצלמה פנימי
-        canvas.create_oval(20, 23, 44, 47, fill="#ffffff", outline="#084298", width=2)  # מצייר את הטבעת הלבנה החיצונית של עדשת המצלמה
-        canvas.create_oval(26, 29, 38, 41, fill="#1a202c", outline="")  # מצייר את העיגול הכהה המרכזי של עדשת המצלמה
-        canvas.create_oval(29, 31, 32, 34, fill="#ffffff", outline="") # השתקפות אור בעדשה  # מצייר נקודה לבנה קטנה המדמה השתקפות אור (ברק) בעדשה
-
-    def create_feature_card(self, parent, row, col, icon, title_he, title_en, action_name):  # פונקציה ליצירת כרטיס פעולה מעוצב בלוח הבקרה
-        """יוצר כרטיס פיצ'ר מעוצב עם אפקט ריחוף"""
-        card = tk.Frame(  # יוצר את מסגרת הכרטיס הראשית
-            parent, bg=self.card_bg, cursor="hand2",  # קובע רקע לבן וסמן עכבר בצורת יד בלחיצה
-            highlightbackground="#d0e1f9", highlightthickness=2  # מוסיף מסגרת דקה בגוון תכלת בעובי 2 פיקסלים
+        # באנר עליון קומפקטי ואלגנטי
+        hero_banner = ctk.CTkFrame(
+            workspace, fg_color=self.panel_dark, corner_radius=16,
+            border_width=1, border_color=self.border_subtle
         )
-        card.grid(row=row, column=col, padx=16, pady=16, sticky="nsew")  # ממקם את הכרטיס במיקום שנקבע ברשת עם מרווחים ומתיחה לכל הכיוונים
+        hero_banner.pack(fill="x", pady=(0, 16))
 
-        # מרכז התוכן בתוך הכרטיס
-        inner = tk.Frame(card, bg=self.card_bg)  # יוצר מסגרת פנימית המרכזת את כל תוכן הכרטיס
-        inner.place(relx=0.5, rely=0.5, anchor="center")  # ממקם את המסגרת הפנימית בדיוק במרכז הגיאומטרי של הכרטיס
+        hero_inner = ctk.CTkFrame(hero_banner, fg_color="transparent")
+        hero_inner.pack(fill="x", padx=22, pady=14)
 
-        icon_lbl = tk.Label(inner, text=icon, font=("Segoe UI", 42), bg=self.card_bg, fg=self.accent_blue)  # יוצר תווית להצגת האייקון הגדול של הכרטיס בגודל 42
-        icon_lbl.pack(pady=(0, 15))  # מציב את תווית האייקון עם מרווח תחתון של 15 פיקסלים
+        ctk.CTkLabel(
+            hero_inner, text="לוח בקרה ראשי — ניהול מערכת צילום מאובטחת",
+            font=("Segoe UI", 19, "bold"), text_color=self.text_primary
+        ).pack(side="right")
 
-        he_lbl = tk.Label(inner, text=title_he, font=("Segoe UI", 16, "bold"), bg=self.card_bg, fg=self.text_dark)  # יוצר תווית לכותרת העברית בגופן מודגש
-        he_lbl.pack(pady=(0, 6))  # מציב את הכותרת העברית עם מרווח תחתון של 6 פיקסלים
+        ctk.CTkLabel(
+            hero_inner, text="סינון צילומים, תפעול מצלמה, יומן פעילות וגישה לקבצים מוצפנים",
+            font=("Segoe UI", 12), text_color=self.text_secondary
+        ).pack(side="left")
 
-        en_lbl = tk.Label(inner, text=title_en, font=("Segoe UI", 12), bg=self.card_bg, fg=self.text_gray, justify="center")  # יוצר תווית לכותרת המשנה באנגלית במרכוז
-        en_lbl.pack()  # מציב את כותרת המשנה מתחת לכותרת העברית
+        # רשת 2x2
+        grid = ctk.CTkFrame(workspace, fg_color="transparent")
+        grid.pack(fill="both", expand=True)
 
-        # אירועי ריחוף ולחיצה לכל הרכיבים בתוך הכרטיס
-        all_widgets = [card, inner, icon_lbl, he_lbl, en_lbl]  # מאגד את כל רכיבי הכרטיס לרשימה לצורך החלת אירועים משותפים
-        for w in all_widgets:  # עובר על כל אחד מרכיבי הכרטיס
-            w.bind("<Enter>", lambda e: self.set_card_bg(all_widgets, self.card_hover))  # משנה את צבע הרקע לגוון ריחוף בהיר בעת כניסת העכבר
-            w.bind("<Leave>", lambda e: self.set_card_bg(all_widgets, self.card_bg))  # מחזיר את צבע הרקע ללבן בעת יציאת סמן העכבר
-            w.bind("<Button-1>", lambda e: self.on_click(action_name))  # מחבר לחיצת עכבר שמאלית להפעלת הפעולה המשויכת לכרטיס
+        grid.columnconfigure(0, weight=1, uniform="c")
+        grid.columnconfigure(1, weight=1, uniform="c")
+        grid.rowconfigure(0, weight=1, uniform="r")
+        grid.rowconfigure(1, weight=1, uniform="r")
 
-    def set_card_bg(self, widgets, color):  # פונקציית עזר לעדכון צבע הרקע של קבוצת רכיבים בבת אחת
-        for w in widgets:  # עובר בלולאה על כל הווידג'טים ברשימה
-            w.configure(bg=color)  # מגדיר את צבע הרקע החדש לרכיב הנוכחי
+        cards_config = [
+            (
+                0, 0, "01", "🔍",
+                "חיפוש וסינון מתקדם",
+                "Advanced Search & Filter",
+                "איתור מהיר של הקלטות ואירועים לפי טווח תאריכים, שעות ופרמטרים מותאמים.",
+                "סינון לפי תאריך ושעה",
+                "Search & Filter"
+            ),
+            (
+                0, 1, "02", "📹",
+                "פעולות מצלמה",
+                "Camera Operations",
+                "שליטה שוטפת במצלמה, בדיקת תקשורת מול השרת והפעלה או עצירה של צילום והקלטה.",
+                "תפעול וחיבור שרת",
+                "Camera Operations"
+            ),
+            (
+                1, 0, "03", "🛡️",
+                "יומן אבטחה מוגן",
+                "Security Logs",
+                "תיעוד מפורט ומוגן של התחברויות, פעולות משתמשים ואירועי גישה במערכת.",
+                "מעקב פעילות והרשאות",
+                "Security Logs"
+            ),
+            (
+                1, 1, "04", "🔐",
+                "צילומים מוצפנים",
+                "Encrypted Recordings",
+                "צפייה וניהול מבוקרים של קובצי וידאו השמורים בהצפנה ופתיחתם למשתמשים מורשים.",
+                "גישה לכספת המוצפנת",
+                "Encrypted Recordings"
+            )
+        ]
 
-    def on_click(self, name):  # פונקציה המטפלת בלחיצה על כרטיסים, כפתורים וטאבים בממשק
-        # בשלב זה רק מדפיס לטרמינל לצורך בדיקת השלד
-        print(f"[UI Skeleton] נלחץ: {name}")  # מדפיס לקונסול את שם הפעולה או הטאב שנלחץ לצורך בדיקה ומעקב
+        for r, c, num, icon, title_he, title_en, desc, tag, action in cards_config:
+            self.create_vault_card(grid, r, c, num, icon, title_he, title_en, desc, tag, action)
+
+    def create_vault_card(self, parent, row, col, num, icon, title_he, title_en, desc, tag, action_name):
+        card = ctk.CTkFrame(
+            parent, fg_color=self.card_bg, corner_radius=18,
+            border_width=1.5, border_color=self.border_subtle, cursor="hand2"
+        )
+        card.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+
+        # פס הדגשה עליון דק למראה מודולרי
+        top_accent = ctk.CTkFrame(card, fg_color="#1e3a5f", height=4, corner_radius=2)
+        top_accent.pack(fill="x", padx=18, pady=(14, 0))
+
+        # שורת כותרת: מספר מודול + כותרת באנגלית משמאל, אייקון וכותרת בעברית מימין
+        header_row = ctk.CTkFrame(card, fg_color="transparent")
+        header_row.pack(fill="x", padx=20, pady=(12, 6))
+
+        right_title = ctk.CTkFrame(header_row, fg_color="transparent")
+        right_title.pack(side="right")
+
+        icon_holder = ctk.CTkLabel(
+            header_row, text=icon, font=("Segoe UI", 24),
+            fg_color="#0f243d", text_color=self.cyan_accent,
+            width=48, height=48, corner_radius=12
+        )
+        icon_holder.pack(side="right", padx=(12, 0))
+
+        ctk.CTkLabel(
+            right_title, text=title_he,
+            font=("Segoe UI", 18, "bold"), text_color=self.text_primary
+        ).pack(anchor="e")
+
+        ctk.CTkLabel(
+            right_title, text=title_en,
+            font=("Segoe UI", 11, "bold"), text_color=self.cyan_accent
+        ).pack(anchor="e")
+
+        num_lbl = ctk.CTkLabel(
+            header_row, text=f"MOD // {num}",
+            font=("Consolas", 11, "bold"), text_color=self.text_secondary
+        )
+        num_lbl.pack(side="left", anchor="n")
+
+        # תיאור הפונקציה
+        desc_lbl = ctk.CTkLabel(
+            card, text=desc, font=("Segoe UI", 12),
+            text_color=self.text_secondary, justify="right", wraplength=410
+        )
+        desc_lbl.pack(anchor="e", padx=20, pady=(6, 12))
+
+        # שורה תחתונה בכרטיס: תגית שימוש + כפתור/סימן כניסה
+        footer_row = ctk.CTkFrame(card, fg_color="transparent")
+        footer_row.pack(fill="x", side="bottom", padx=20, pady=(0, 16))
+
+        tag_lbl = ctk.CTkLabel(
+            footer_row, text=tag, font=("Segoe UI", 11, "bold"),
+            text_color="#93c5fd", fg_color="#102542",
+            corner_radius=8, padx=10, pady=4
+        )
+        tag_lbl.pack(side="right")
+
+        enter_lbl = ctk.CTkLabel(
+            footer_row, text="← כניסה למודול",
+            font=("Segoe UI", 12, "bold"), text_color=self.cyan_accent
+        )
+        enter_lbl.pack(side="left")
+
+        def on_enter(_):
+            card.configure(fg_color=self.card_hover, border_color=self.border_glow)
+            top_accent.configure(fg_color=self.cyan_accent)
+            enter_lbl.configure(text_color="#ffffff")
+
+        def on_leave(_):
+            card.configure(fg_color=self.card_bg, border_color=self.border_subtle)
+            top_accent.configure(fg_color="#1e3a5f")
+            enter_lbl.configure(text_color=self.cyan_accent)
+
+        def on_press(_):
+            self.on_click(action_name)
+
+        widgets = [
+            card, top_accent, header_row, right_title, icon_holder,
+            num_lbl, desc_lbl, footer_row, tag_lbl, enter_lbl
+        ]
+        for child in right_title.winfo_children():
+            widgets.append(child)
+
+        for w in widgets:
+            w.bind("<Enter>", on_enter)
+            w.bind("<Leave>", on_leave)
+            w.bind("<Button-1>", on_press)
+
+    def on_click(self, name):
+        print(f"[Cyber Vault UI] נלחץ: {name}")
 
 
-if __name__ == "__main__":  # בודק האם הקובץ מורץ ישירות כתוכנית ראשית
-    root = tk.Tk()  # יוצר מופע חדש של חלון Tkinter ראשי
-    app = MainDashboardGUI(root)  # יוצר מופע של מחלקת לוח הבקרה ומעביר אליו את החלון
-    root.mainloop()  # מפעיל את לולאת האירועים הראשית של Tkinter להצגת החלון והמתנה לאינטראקציות משתמש
+if __name__ == "__main__":
+    root = ctk.CTk()
+    app = CyberVaultDashboardGUI(root)
+    root.mainloop()
